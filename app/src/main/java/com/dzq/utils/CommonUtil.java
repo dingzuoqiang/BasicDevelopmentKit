@@ -30,6 +30,8 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -98,6 +100,11 @@ public class CommonUtil {
         return false;
     }
 
+    /**
+     * 如果希望格式化时间为12小时制的，则使用hh:mm:ss
+     * 而如果希望格式化时间为24小时制的，则使用HH:mm:ss
+     * String  format   ;"yyyy-MM-dd HH:mm:ss"
+     */
     public static String date2String(Date time, String format) {
         try {
             SimpleDateFormat dateformat = new SimpleDateFormat(format);
@@ -108,6 +115,8 @@ public class CommonUtil {
     }
 
     /**
+     * 如果希望格式化时间为12小时制的，则使用hh:mm:ss
+     * 而如果希望格式化时间为24小时制的，则使用HH:mm:ss
      * String  pattern   ;"yyyy-MM-dd HH:mm:ss"
      * srcDate 格式要与 srcDatePattern 一致
      */
@@ -152,6 +161,13 @@ public class CommonUtil {
             e.printStackTrace();
         }
         return false;
+    }
+
+
+    public static String getUUID() {
+        UUID uuid = UUID.randomUUID();
+        String uniqueId = uuid.toString();
+        return uniqueId;
     }
 
     /**
@@ -201,7 +217,7 @@ public class CommonUtil {
      * @param ctx 此处习惯性的设置为activity，实际上context就可以
      * @return 如果没有获取成功，那么返回值为空
      */
-    public static String getChannelName(Activity ctx) {
+    public static String getChannelName(Context ctx) {
         if (ctx == null) {
             return null;
         }
@@ -312,15 +328,6 @@ public class CommonUtil {
         return (int) (pxValue / scale + 0.5f);
     }
 
-//    public static void openLoginActicity(Context context, String msg) {
-//        if (msg.equals("NEED_LOGIN")) {
-//            Intent intent = new Intent(context, LoginActivity.class);
-//            context.startActivity(intent);
-//            clearLoginData();
-//        }
-//
-//    }
-
     public static void openActicity(Context context, Class<?> class1,
                                     Bundle pBundle) {
         Intent intent = new Intent(context, class1);
@@ -384,9 +391,7 @@ public class CommonUtil {
     public static double round(double value, int scale, int roundingMode) {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(scale, roundingMode);
-        double d = bd.doubleValue();
-        bd = null;
-        return d;
+        return bd.doubleValue();
     }
 
 //    roundingMode的取值有一下几个：
@@ -442,6 +447,44 @@ public class CommonUtil {
                         | DateUtils.FORMAT_SHOW_DATE
                         | DateUtils.FORMAT_ABBREV_ALL);
         return label;
+    }
+
+    public static Date localToGMT(Date date) {
+        if (date == null) return null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return new Date(sdf.format(date));
+    }
+
+    /**
+     * 当地时间 ---> UTC时间
+     *
+     * @return
+     */
+    public static String Local2UTC() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("gmt"));
+        return sdf.format(new Date());
+    }
+
+    /**
+     * UTC时间 ---> 当地时间
+     *
+     * @param utcTime UTC时间
+     * @return
+     */
+    public static String utc2Local(String utcTime) {
+        SimpleDateFormat utcFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//UTC时间格式
+        utcFormater.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date gpsUTCDate = null;
+        try {
+            gpsUTCDate = utcFormater.parse(utcTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat localFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//当地时间格式
+        localFormater.setTimeZone(TimeZone.getDefault());
+        return localFormater.format(gpsUTCDate.getTime());
     }
 
 }
