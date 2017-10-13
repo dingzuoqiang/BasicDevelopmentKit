@@ -167,7 +167,6 @@ public class CommonUtil {
     public static String getUUID() {
         UUID uuid = UUID.randomUUID();
         String uniqueId = uuid.toString();
-        LogUtil.LogE(CommonUtil.class, "uuid = " + uniqueId);
         return uniqueId;
     }
 
