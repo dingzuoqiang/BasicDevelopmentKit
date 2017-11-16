@@ -61,6 +61,7 @@ public class FormNormal extends LinearLayout {
             CharSequence title = a.getText(R.styleable.FormNormal_fnTitle);
             CharSequence text = a.getText(R.styleable.FormNormal_fnText);
             boolean indicatorVisible = a.getBoolean(R.styleable.FormNormal_fnIndicatorVisible, true);
+            int indicatorResid = a.getResourceId(R.styleable.FormNormal_fnIndicatorResId, -1);
             editable = a.getBoolean(R.styleable.FormNormal_fnEditable, false);
             boolean fnGravityLeft = a.getBoolean(R.styleable.FormNormal_fnGravityLeft, false);// 内容靠左对其
             int resid = a.getResourceId(R.styleable.FormNormal_fnResId, -1);
@@ -103,6 +104,7 @@ public class FormNormal extends LinearLayout {
             setGravity(fnGravityLeft);
 
             setImvLabelImageResource(resid);
+            setImvIndicatorImageResource(indicatorResid);
 
             if (fnSetClearable) {
                 setClearable();

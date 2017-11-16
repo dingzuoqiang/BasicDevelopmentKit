@@ -6,6 +6,7 @@
         <attr name="fnText" format="string" />
         <attr name="fnTitle" format="string" />
         <attr name="fnIndicatorVisible" format="boolean" />
+        <attr name="fnIndicatorResId" format="reference" />
         <attr name="fnEditable" format="boolean" />
         <attr name="fnGravityLeft" format="boolean" />
         <attr name="fnResId" format="reference" />
