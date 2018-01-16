@@ -47,11 +47,6 @@ public class AccountValidatorUtil {
     public static final String REGEX_ID_CARD = "(^\\d{18}$)|(^\\d{15}$)";
 
     /**
-     * 正则表达式：验证URL
-     */
-    public static final String REGEX_URL = "http(s)?://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?";
-
-    /**
      * 正则表达式：验证IP地址
      */
     public static final String REGEX_IP_ADDR = "(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)";
@@ -125,16 +120,6 @@ public class AccountValidatorUtil {
      */
     public static boolean isIDCard(String idCard) {
         return Pattern.matches(REGEX_ID_CARD, idCard);
-    }
-
-    /**
-     * 校验URL
-     *
-     * @param url
-     * @return 校验通过返回true，否则返回false
-     */
-    public static boolean isUrl(String url) {
-        return Pattern.matches(REGEX_URL, url);
     }
 
     /**

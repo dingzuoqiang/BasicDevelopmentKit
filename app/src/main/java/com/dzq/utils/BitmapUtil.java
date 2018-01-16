@@ -18,9 +18,15 @@ import java.io.IOException;
  */
 
 public class BitmapUtil {
-    //   按照一定压缩比 和
-//    压1.
-//            缩质量 压缩图片
+
+    /**
+     * 按照一定压缩比 和 质量
+     *
+     * @param filePath
+     * @param width
+     * @param height
+     * @param quality  图片质量   1-100
+     */
     public static Bitmap getSmallBitmap(String filePath, int width, int height, int quality) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -63,10 +69,63 @@ public class BitmapUtil {
         }
     }
 
+    /**
+     * 按照一定压缩比 和 质量
+     *
+     * @param filePath
+     * @param width
+     * @param height
+     * @param maxSize  target will be compressed to be smaller than this size.(kb)
+     */
+    public static Bitmap getSmallBitmap2(String filePath, int width, int height, int maxSize) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+        options.inSampleSize = calculateInSampleSize(options, width, height);
+        options.inJustDecodeBounds = false;
+        Bitmap srcBitmap = BitmapFactory.decodeFile(filePath, options);
+        if (srcBitmap == null) {
+            return null;
+        } else {
+            int degree = readPictureDegree(filePath);
+            Bitmap dstBitmap = rotateBitmap(srcBitmap, degree);
+            if (dstBitmap != srcBitmap) {
+                srcBitmap.recycle();
+                srcBitmap = null;
+            }
+
+            if (dstBitmap != null) {
+                int quality = 100;
+                ByteArrayOutputStream baos = null;
+                try {
+                    baos = new ByteArrayOutputStream();
+                    dstBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);//这里压缩quality%，把压缩后的数据存放到baos中
+                    // Compress by loop
+                    while ((baos.toByteArray().length / 1024 > maxSize) && quality > 0) {
+                        // Clean up os
+                        baos.reset();
+                        // interval 10
+                        quality -= 5;
+                        dstBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+                    }
+                    ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
+                    dstBitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
+                } finally {
+                    try {
+                        if (baos != null) {
+                            baos.close();
+                        }
+                    } catch (IOException var15) {
+                        var15.printStackTrace();
+                    }
+                }
+                return dstBitmap;
+            }
+            return dstBitmap;
+        }
+    }
 
     //  4.读取图片旋转角度
-
-
     private static int readPictureDegree(String path) {
         int degree = 0;
         try {
@@ -140,9 +199,8 @@ public class BitmapUtil {
         float scaleHeight = ((float) newHeight) / height;
         // 缩放图片动作
         matrix.postScale(scaleWidth, scaleHeight);
-        Bitmap bitmap = Bitmap.createBitmap(bgimage, 0, 0, (int) width,
+        return Bitmap.createBitmap(bgimage, 0, 0, (int) width,
                 (int) height, matrix, true);
-        return bitmap;
     }
 
     /**
@@ -190,7 +248,7 @@ public class BitmapUtil {
         // Store the bitmap into output stream(no compress)
         image.compress(Bitmap.CompressFormat.JPEG, options, os);
         // Compress by loop
-        while (os.toByteArray().length / 1024 > maxSize) {
+        while (os.toByteArray().length / 1024 > maxSize && options > 0) {
             // Clean up os
             os.reset();
             // interval 10
@@ -203,6 +261,14 @@ public class BitmapUtil {
         fos.write(os.toByteArray());
         fos.flush();
         fos.close();
+
+        // 先判断是否已经回收
+        if (image != null && !image.isRecycled()) {
+            // 回收并且置为null
+            image.recycle();
+            image = null;
+        }
+        System.gc();
     }
 
     /**

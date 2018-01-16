@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -18,8 +20,11 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.EditText;
 
 import java.io.File;
@@ -32,8 +37,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by dingzuoqiang on 2017/07/10.
@@ -147,22 +150,6 @@ public class CommonUtil {
         }
         return false;
     }
-
-    /**
-     * 判断手机号格式是否正确
-     */
-    public static boolean isMobileNO(String str) {
-        try {
-            String regExp = "^[1][0-9]{10}$";
-            Pattern p = Pattern.compile(regExp);
-            Matcher m = p.matcher(str);
-            return m.matches();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
 
     public static String getUUID() {
         UUID uuid = UUID.randomUUID();
@@ -330,9 +317,26 @@ public class CommonUtil {
 
     public static void openActicity(Context context, Class<?> class1,
                                     Bundle pBundle) {
+        openActicity(context, class1, pBundle, 0);
+
+    }
+
+    /**
+     * 跳转到新的activity
+     *
+     * @param context context
+     * @param class1  目标Activity
+     * @param pBundle
+     * @param flags   启动模式
+     */
+    public static void openActicity(Context context, Class<?> class1,
+                                    Bundle pBundle, int flags) {
         Intent intent = new Intent(context, class1);
         if (pBundle != null) {
             intent.putExtras(pBundle);
+        }
+        if (flags > 0) {
+            intent.setFlags(flags);
         }
         context.startActivity(intent);
 
@@ -485,6 +489,50 @@ public class CommonUtil {
         SimpleDateFormat localFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//当地时间格式
         localFormater.setTimeZone(TimeZone.getDefault());
         return localFormater.format(gpsUTCDate.getTime());
+    }
+
+    public static int getTextWidth(String text, Paint paint) {
+        Rect bounds = new Rect();
+        paint.getTextBounds(text, 0, text.length(), bounds);
+        return bounds.left + bounds.width();
+    }
+
+    public static int getTextHeight(String text, Paint paint) {
+        Rect bounds = new Rect();
+        paint.getTextBounds(text, 0, text.length(), bounds);
+        return bounds.bottom + bounds.height();
+    }
+
+    /**
+     * 设置添加屏幕的背景透明度
+     *
+     * @param bgAlpha 屏幕透明度0.0-1.0 1表示完全不透明
+     */
+    public static void setBackgroundAlpha(Activity activity, float bgAlpha) {
+        if (activity == null) return;
+        WindowManager.LayoutParams lp = activity.getWindow()
+                .getAttributes();
+        lp.alpha = bgAlpha;
+        activity.getWindow().setAttributes(lp);
+    }
+
+    // 销毁WebView
+    public static void onDestroyWebView(WebView mWebView) {
+        if (mWebView != null) {
+            // 如果先调用destroy()方法，则会命中if (isDestroyed()) return;这一行代码，需要先onDetachedFromWindow()，再
+            // destory()
+            ViewParent parent = mWebView.getParent();
+            if (parent != null) {
+                ((ViewGroup) parent).removeView(mWebView);
+            }
+            mWebView.stopLoading();
+            // 退出时调用此方法，移除绑定的服务，否则某些特定系统会报错
+            mWebView.getSettings().setJavaScriptEnabled(false);
+            mWebView.clearHistory();
+            mWebView.clearView();
+            mWebView.removeAllViews();
+            mWebView.destroy();
+        }
     }
 
 }
