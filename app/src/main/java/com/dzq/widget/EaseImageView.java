@@ -312,7 +312,18 @@ public class EaseImageView extends ImageView {
      */
     public void setRadius(int radius) {
         this.radius = radius;
-        invalidate();
+    }
+
+    /**
+     * set radius
+     *
+     * @param radius
+     * @param invalidate
+     */
+    public void setRadius(int radius, boolean invalidate) {
+        this.radius = radius;
+        if (invalidate)
+            invalidate();
     }
 
     /**
@@ -322,6 +333,17 @@ public class EaseImageView extends ImageView {
      */
     public void setShapeType(int shapeType) {
         this.shapeType = shapeType;
-        invalidate();
+    }
+
+    /**
+     * set shape,1 is circle, 2 is rectangle
+     *
+     * @param shapeType
+     * @param invalidate
+     */
+    public void setShapeType(int shapeType, boolean invalidate) {
+        this.shapeType = shapeType;
+        if (invalidate)
+            invalidate();
     }
 }

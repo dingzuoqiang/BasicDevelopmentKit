@@ -8,7 +8,6 @@ import android.media.ExifInterface;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -226,11 +225,25 @@ public class BitmapUtil {
      *
      * @param bitmap
      * @param outPath
-     * @throws FileNotFoundException
+     * @throws ,IOException
      */
-    public void storeImage(Bitmap bitmap, String outPath) throws FileNotFoundException {
+    public void storeImage(Bitmap bitmap, String outPath) throws IOException {
+        storeImage(bitmap, outPath, 100);
+    }
+
+    /**
+     * Store bitmap into specified image path
+     *
+     * @param bitmap
+     * @param outPath
+     * @param quality
+     * @throws IOException
+     */
+    public void storeImage(Bitmap bitmap, String outPath, int quality) throws IOException {
         FileOutputStream os = new FileOutputStream(outPath);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, os);
+        os.flush();
+        os.close();
     }
 
     /**

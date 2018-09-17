@@ -77,6 +77,11 @@ public class CustomBannerView extends RelativeLayout {
     private int errorHolder;
     private ImageView.ScaleType scaleType = ImageView.ScaleType.CENTER_CROP;
 
+    // imageRadius
+    private int imageRadius;
+    // rectangle or round, 1 is circle, 2 is rectangle
+    private int shapeType;
+
     private boolean isLoop = true;
 
     private enum Shape {
@@ -243,7 +248,9 @@ public class CustomBannerView extends RelativeLayout {
 
     @NonNull
     private ImageView getImageView(Integer res, final int position) {
-        ImageView imageView = new ImageView(getContext());
+        EaseImageView imageView = new EaseImageView(getContext());
+        imageView.setRadius(imageRadius);
+        imageView.setShapeType(shapeType);
         imageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -293,7 +300,9 @@ public class CustomBannerView extends RelativeLayout {
 
     @NonNull
     private ImageView getImageView(String url, final int position) {
-        ImageView imageView = new ImageView(getContext());
+        EaseImageView imageView = new EaseImageView(getContext());
+        imageView.setRadius(imageRadius);
+        imageView.setShapeType(shapeType);
         imageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -605,5 +614,23 @@ public class CustomBannerView extends RelativeLayout {
     // 设置是否允许 循环
     public void setLoop(boolean loop) {
         isLoop = loop;
+    }
+
+    /**
+     * set imageRadius
+     *
+     * @param imageRadius
+     */
+    public void setImageRadius(int imageRadius) {
+        this.imageRadius = imageRadius;
+    }
+
+    /**
+     * set shape,1 is circle, 2 is rectangle
+     *
+     * @param shapeType
+     */
+    public void setShapeType(int shapeType) {
+        this.shapeType = shapeType;
     }
 }
