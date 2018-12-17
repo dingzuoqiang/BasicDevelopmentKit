@@ -22,11 +22,14 @@ import android.widget.RelativeLayout;
 import android.widget.Scroller;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.dzq.basicdevelopmentkit.R;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * Created by dingzuoqiang on 2017/6/15.
@@ -260,14 +263,21 @@ public class CustomBannerView extends RelativeLayout {
             }
         });
         imageView.setScaleType(scaleType);
-        if (placeholder != 0 && errorHolder == 0) {
-            Glide.with(getContext()).load(res).placeholder(placeholder).crossFade().into(imageView);
-        } else if (placeholder == 0 && errorHolder != 0) {
-            Glide.with(getContext()).load(res).error(errorHolder).crossFade().into(imageView);
-        } else if (placeholder != 0 && errorHolder != 0) {
-            Glide.with(getContext()).load(res).placeholder(placeholder).error(errorHolder).crossFade().into(imageView);
+        RequestOptions requestOptions = null;
+        if (placeholder != 0 || errorHolder != 0) {
+            requestOptions = new RequestOptions();
+            if (placeholder != 0) {
+                requestOptions.placeholder(placeholder);
+            }
+            if (errorHolder != 0) {
+                requestOptions.error(errorHolder);
+            }
+        }
+
+        if (requestOptions != null) {
+            Glide.with(getContext()).load(res).apply(requestOptions).transition(withCrossFade()).into(imageView);
         } else {
-            Glide.with(getContext()).load(res).crossFade().into(imageView);
+            Glide.with(getContext()).load(res).transition(withCrossFade()).into(imageView);
         }
         return imageView;
     }
@@ -312,14 +322,21 @@ public class CustomBannerView extends RelativeLayout {
             }
         });
         imageView.setScaleType(scaleType);
-        if (placeholder != 0 && errorHolder == 0) {
-            Glide.with(getContext()).load(url).placeholder(placeholder).crossFade().into(imageView);
-        } else if (placeholder == 0 && errorHolder != 0) {
-            Glide.with(getContext()).load(url).error(errorHolder).crossFade().into(imageView);
-        } else if (placeholder != 0 && errorHolder != 0) {
-            Glide.with(getContext()).load(url).placeholder(placeholder).error(errorHolder).crossFade().into(imageView);
+        RequestOptions requestOptions = null;
+        if (placeholder != 0 || errorHolder != 0) {
+            requestOptions = new RequestOptions();
+            if (placeholder != 0) {
+                requestOptions.placeholder(placeholder);
+            }
+            if (errorHolder != 0) {
+                requestOptions.error(errorHolder);
+            }
+        }
+
+        if (requestOptions != null) {
+            Glide.with(getContext()).load(url).apply(requestOptions).transition(withCrossFade()).into(imageView);
         } else {
-            Glide.with(getContext()).load(url).crossFade().into(imageView);
+            Glide.with(getContext()).load(url).transition(withCrossFade()).into(imageView);
         }
         return imageView;
     }
