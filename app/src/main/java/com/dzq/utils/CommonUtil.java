@@ -426,6 +426,7 @@ public class CommonUtil {
             return false;
         }
     }
+
     /**
      * 密码显示或隐藏 （切换）
      */
